@@ -2,6 +2,7 @@ package com.buddy.studybuddy.entities;
 
 
 import jakarta.persistence.*;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,6 +29,12 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private String password;
+    @Setter
+    @Column(nullable = true)
+    private String oauthProvider; // GOOGLE, GITHUB, etc.
+    @Setter
+    @Column(nullable = true)
+    private String oauthId; // ID from Google OAuth
 
     @CreationTimestamp
     @Column(updatable = false, name = "created_at")

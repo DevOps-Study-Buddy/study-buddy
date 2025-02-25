@@ -11,12 +11,18 @@ import com.buddy.studybuddy.services.AuthenticationService;
 import com.buddy.studybuddy.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RequestMapping("/auth")
 @RestController
@@ -39,7 +45,7 @@ public class AuthenticationController {
 //                    .badRequest()
 //                    .body(new MessageResponseDTO("Error: Email is already taken!"));
             ErrorDTO err = new ErrorDTO();
-            err .setCode("AUTH_005");
+            err.setCode("AUTH_005");
             err.setMessage("Email is already taken!");
             System.out.println("ErrorDTO: " + err);
             throw new BusinessException(List.of(err));
@@ -59,4 +65,22 @@ public class AuthenticationController {
 
         return ResponseEntity.ok(loginResponse);
     }
+    @GetMapping("/info")
+    public Map<String, Object> getUserInfo(@AuthenticationPrincipal OAuth2User user) {
+        if (user == null) {
+            throw new RuntimeException("User is not authenticated. Please log in via Google.");
+        }
+
+        // Fetch user from DB
+        String email = user.getAttribute("email");
+        Optional<User> dbUser = userRepository.findByEmail(email);
+
+        // Merge OAuth2 attributes with DB data
+        Map<String, Object> attributes = new HashMap<>(user.getAttributes());
+        dbUser.ifPresent(value -> attributes.put("dbId", value.getId()));
+
+        return attributes;
+    }
+
+
 }
