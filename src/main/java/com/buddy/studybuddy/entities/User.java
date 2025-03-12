@@ -29,10 +29,10 @@ public class User implements UserDetails {
 
     @Column(nullable = false)
     private String password;
-    @Setter
+
     @Column(nullable = true)
     private String oauthProvider; // GOOGLE, GITHUB, etc.
-    @Setter
+
     @Column(nullable = true)
     private String oauthId; // ID from Google OAuth
 
@@ -160,4 +160,11 @@ public class User implements UserDetails {
                 '}';
     }
 
+    public void setOauthProvider(String oauthProvider) {
+        this.oauthProvider = oauthProvider;
+    }
+
+    public void setOauthId(String oauthId) {
+        this.oauthId = oauthId;
+    }
 }
