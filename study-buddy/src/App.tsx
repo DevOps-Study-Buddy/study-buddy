@@ -1,8 +1,12 @@
 // src/App.tsx
 import React, { useState } from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import UploadSection from './components/UploadSection';
 import ResponseBox from './components/ResponseBox';
 import SessionList from './components/SessionList';
+import LandingPage from './components/LandingPage';
+import GoogleCallback from './components/GoogleCallback';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import './App.css';
 
 // Types
@@ -21,9 +25,33 @@ export interface Session {
   response: string;
 }
 
-function App() {
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  photoUrl?: string;
+}
+
+// Protected route component
+const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div className="loading">Loading...</div>;
+  }
+
+  if (!user) {
+    return <Navigate to="/" />;
+  }
+
+  return <>{children}</>;
+};
+
+// Main application component
+const MainApp: React.FC = () => {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+  const { user, logout } = useAuth();
   
   // Get current session
   const currentSession = sessions.find(session => session.id === currentSessionId) || null;
@@ -71,10 +99,17 @@ function App() {
     <div className="app-container">
       <div className="app-header">
         <div className="app-logo">
-        <img src="/study-buddy-icon.svg" alt="Study Buddy" />
-        <h1>Study Buddy</h1>
+          <img src="/study-buddy-icon.svg" alt="Study Buddy" />
+          <h1>Study Buddy</h1>
+        </div>
+        {user && (
+          <div className="user-profile">
+            {user.photoUrl && <img src={user.photoUrl} alt={user.name} className="user-avatar" />}
+            <span className="user-name">{user.name}</span>
+            <button className="logout-btn" onClick={logout}>Logout</button>
+          </div>
+        )}
       </div>
-    </div>
       <div className="app-content">
         <div className="left-panel">
           <SessionList 
@@ -95,6 +130,25 @@ function App() {
         </div>
       </div>
     </div>
+  );
+};
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/auth/google/callback" element={<GoogleCallback />} />
+          <Route path="/app" element={
+            <ProtectedRoute>
+              <MainApp />
+            </ProtectedRoute>
+          } />
+          <Route path="/demo" element={<MainApp />} />
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
