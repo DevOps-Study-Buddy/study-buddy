@@ -1,16 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-FROM openjdk:17-jdk-slim
-
-WORKDIR /app
-
-COPY pom.xml .
-COPY src ./src
-
-RUN mvn clean package -DskipTests
-
-CMD ["java", "-jar", "target/studybuddy-0.0.1-SNAPSHOT.jar"]
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
@@ -23,6 +11,10 @@ CMD ["java", "-jar", "target/studybuddy-0.0.1-SNAPSHOT.jar"]
     <groupId>com.buddy</groupId>
     <artifactId>studybuddy</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>demo</module>
+    </modules>
     <name>studybuddy</name>
     <description>studybuddy</description>
     <url/>
