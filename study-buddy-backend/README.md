@@ -138,3 +138,5 @@ This project is licensed under the **MIT License**.
 ## Author
 Developed by **Buddy Study Team**. 🚀
 
+commit from dev/backend
+
