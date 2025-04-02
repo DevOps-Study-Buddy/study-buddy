@@ -37,14 +37,10 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return <div className="loading">Checking authentication.....</div>;
   }
 
-  if (!user) {
-    return <Navigate to="/" />;
-  }
-
-  return <>{children}</>;
+  return user ? <>{children}</> : <Navigate to="/" />;
 };
 
 // Main application component
@@ -138,14 +134,20 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/auth/google/callback" element={<GoogleCallback />} />
-          <Route path="/app" element={
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/auth/google/callback" element={<GoogleCallback />} />
+
+          {/* Protected Routes */}
+          <Route path="/dashboard" element={
             <ProtectedRoute>
               <MainApp />
             </ProtectedRoute>
           } />
+          {/* Demo Page (Accessible without login) */}
           <Route path="/demo" element={<MainApp />} />
+
+          {/* Catch-all route: Redirect unknown paths to home */}
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
