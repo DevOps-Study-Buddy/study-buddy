@@ -2,13 +2,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
+import api from '../api/api';  // Axios instance
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   const handleGoogleLogin = () => {
     // This will be replaced with actual Google OAuth implementation
-    window.location.href = '/api/auth/google';
+    window.location.href = 'http://localhost:8005/oauth2/authorization/google';
   };
 
   return (
