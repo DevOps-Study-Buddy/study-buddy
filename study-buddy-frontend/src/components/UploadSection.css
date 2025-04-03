@@ -1,4 +1,6 @@
 /* src/components/UploadSection.css */
+new upload css
+
 .upload-section {
   padding: 1rem;
   background-color: #f9f9f9;
@@ -80,20 +82,42 @@
   border-bottom: none;
 }
 
+.question-input-container {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.question-input-container label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.question-input {
+  width: 80%;
+  max-width: 100px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  text-align: center;
+}
 .upload-button {
   display: block;
   width: 100%;
-  background-color: #4a6cf7;
+  max-width: 200px;
+  margin: 15px auto;
+  padding: 10px;
+  background-color: #007bff;
   color: white;
   border: none;
-  padding: 0.75rem;
-  border-radius: 4px;
-  font-weight: 600;
-  margin-top: 1rem;
+  border-radius: 5px;
+  font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.2s;
 }
 
 .upload-button:hover {
-  background-color: #3a5dd6;
+  background-color: #0056b3;
 }
+
+

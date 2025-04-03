@@ -4,24 +4,20 @@ import { Document } from '../App';
 import './UploadSection.css';
 
 interface UploadSectionProps {
-  onDocumentsSelected: (documents: Document[]) => void;
+  onDocumentsSelected: (documents: Document[], numQuestions: number) => void;
   isActive: boolean;
 }
 
 const UploadSection: React.FC<UploadSectionProps> = ({ onDocumentsSelected, isActive }) => {
   const [dragActive, setDragActive] = useState<boolean>(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [numQuestions, setNumQuestions] = useState<number>(5); // Default to 5 questions
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
+    setDragActive(e.type === "dragenter" || e.type === "dragover");
   };
   
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -36,22 +32,18 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onDocumentsSelected, isAc
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    
     if (e.target.files && e.target.files.length > 0) {
       handleFiles(Array.from(e.target.files));
     }
   };
   
-  const handleButtonClick = () => {
-    fileInputRef.current?.click();
-  };
+  const handleButtonClick = () => fileInputRef.current?.click();
   
   const handleFiles = (files: File[]) => {
     const validFiles = files.filter(file => {
       const fileExt = file.name.split('.').pop()?.toLowerCase();
       return ['pdf', 'doc', 'docx', 'ppt', 'pptx'].includes(fileExt || '');
     });
-    
     setSelectedFiles(validFiles);
   };
   
@@ -64,7 +56,7 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onDocumentsSelected, isAc
         size: file.size
       }));
       
-      onDocumentsSelected(documents);
+      onDocumentsSelected(documents, numQuestions); // Pass numQuestions
       setSelectedFiles([]);
     }
   };
@@ -96,7 +88,20 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onDocumentsSelected, isAc
           <p className="file-types">Accepted file types: PDF, Word, PowerPoint</p>
         </div>
       </div>
-      
+
+      {/* Input for number of questions */}
+      <div className="question-input-container">
+        <label htmlFor="numQuestions">Number of Questions:</label>
+        <input 
+          type="number"
+          id="numQuestions"
+          min="1"
+          value={numQuestions}
+          onChange={(e) => setNumQuestions(Number(e.target.value))}
+          className="question-input"
+        />
+      </div>
+
       {selectedFiles.length > 0 && (
         <div className="selected-files">
           <h3>Selected Files ({selectedFiles.length})</h3>
