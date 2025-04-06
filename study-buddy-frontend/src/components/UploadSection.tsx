@@ -4,7 +4,7 @@ import { Document } from '../App';
 import './UploadSection.css';
 
 interface UploadSectionProps {
-  onDocumentsSelected: (documents: Document[], numQuestions: number) => void;
+  onDocumentsSelected: (files: File[], numQuestions: number) => void; // ← changed from Document[] to File[]
   isActive: boolean;
 }
 
@@ -39,28 +39,27 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onDocumentsSelected, isAc
   
   const handleButtonClick = () => fileInputRef.current?.click();
   
+  const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB in bytes
   const handleFiles = (files: File[]) => {
     const validFiles = files.filter(file => {
       const fileExt = file.name.split('.').pop()?.toLowerCase();
-      return ['pdf', 'doc', 'docx', 'ppt', 'pptx'].includes(fileExt || '');
+      const isValidType = ['pdf', 'doc', 'docx', 'ppt', 'pptx'].includes(fileExt || '');
+      const isValidSize = file.size <= MAX_FILE_SIZE;
+      return isValidType && isValidSize;
     });
+  
+    if (validFiles.length < files.length) {
+      alert("Some files were excluded because they exceed the 50MB limit or have an invalid file type.");
+    }
+  
     setSelectedFiles(validFiles);
   };
-  
   const handleUpload = () => {
     if (selectedFiles.length > 0) {
-      const documents: Document[] = selectedFiles.map(file => ({
-        id: crypto.randomUUID(),
-        name: file.name,
-        type: file.type || 'application/octet-stream',
-        size: file.size
-      }));
-      
-      onDocumentsSelected(documents, numQuestions); // Pass numQuestions
+      onDocumentsSelected(selectedFiles, numQuestions); // ← now passing real files
       setSelectedFiles([]);
     }
   };
-  
   return (
     <div className="upload-section">
       <h2>Upload Documents</h2>
@@ -107,7 +106,9 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onDocumentsSelected, isAc
           <h3>Selected Files ({selectedFiles.length})</h3>
           <ul>
             {selectedFiles.map((file, index) => (
-              <li key={index}>{file.name}</li>
+              <li key={index}>
+                {file.name} ({(file.size / (1024 * 1024)).toFixed(2)} MB)
+              </li>
             ))}
           </ul>
           <button 
