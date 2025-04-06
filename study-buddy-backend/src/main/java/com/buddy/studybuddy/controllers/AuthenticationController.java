@@ -10,6 +10,7 @@ import com.buddy.studybuddy.responses.LoginResponse;
 import com.buddy.studybuddy.services.AuthenticationService;
 import com.buddy.studybuddy.services.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -47,7 +48,7 @@ public class AuthenticationController {
             ErrorDTO err = new ErrorDTO();
             err.setCode("AUTH_005");
             err.setMessage("Email is already taken!");
-            System.out.println("ErrorDTO: " + err);
+
             throw new BusinessException(List.of(err));
         }
         User registeredUser = authenticationService.signup(registerUserDto);
