@@ -1,10 +1,12 @@
-FROM openjdk:8-jdk-alpine
-VOLUME /tmp
-ARG JAVA_OPTS
-ENV JAVA_OPTS=$JAVA_OPTS
-COPY target/studybuddy-0.0.1-SNAPSHOT.jar studybuddy.jar
-EXPOSE 3000
-ENTRYPOINT exec java $JAVA_OPTS -jar studybuddy.jar
-#ENTRYPOINT exec java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar studybuddy.jar
-# For Spring-Boot project, use the entrypoint below to reduce Tomcat startup time.
-#ENTRYPOINT exec java $JAVA_OPTS -Djava.security.egd=file:/dev/./urandom -jar studybuddy.jar
+# Stage 1: Build with Maven
+FROM maven:3.9.5-eclipse-temurin-17 AS builder
+WORKDIR /build
+COPY . .
+RUN mvn clean package -DskipTests
+
+# Stage 2: Run with JDK
+FROM eclipse-temurin:17-jdk-alpine
+WORKDIR /app
+COPY --from=builder /build/target/studybuddy-0.0.1-SNAPSHOT.jar app.jar
+EXPOSE 8005
+ENTRYPOINT ["java", "-jar", "app.jar"]
