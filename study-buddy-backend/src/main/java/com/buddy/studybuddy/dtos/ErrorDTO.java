@@ -9,9 +9,8 @@ public class ErrorDTO {
 
     }
 
-    public Object setCode(String code) {
+    public void setCode(String code) {
         this.code = code;
-        return null;
     }
 
     public void setMessage(String message) {
