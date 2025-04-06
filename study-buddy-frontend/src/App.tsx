@@ -62,15 +62,16 @@ const MainApp: React.FC = () => {
       formData.append('file', file);
     }
     formData.append('totalQuestion', numQuestions.toString());
-    
+
     try {
       const response = await axios.post(`${serverAdress}/api/documents/upload`, formData, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`, // or however you're storing it
           'Content-Type': 'multipart/form-data',
         },
+        withCredentials: true
       });
-  
+
+      
       const uploadedDocs: Document[] = files.map(file => ({
         id: crypto.randomUUID(), // replace with real ID if backend sends it
         name: file.name,
