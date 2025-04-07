@@ -40,12 +40,29 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onDocumentsSelected, isAc
   const handleButtonClick = () => fileInputRef.current?.click();
   
   const handleFiles = (files: File[]) => {
-    const validFiles = files.filter(file => {
+    const maxSize = 50 * 1024 * 1024; // 50MB
+    const validFiles: File[] = [];
+    const rejectedFiles: string[] = [];
+  
+    files.forEach(file => {
       const fileExt = file.name.split('.').pop()?.toLowerCase();
-      return ['pdf', 'doc', 'docx', 'ppt', 'pptx'].includes(fileExt || '');
+      const isValidType = ['pdf', 'doc', 'docx', 'ppt', 'pptx'].includes(fileExt || '');
+      const isValidSize = file.size <= maxSize;
+  
+      if (isValidType && isValidSize) {
+        validFiles.push(file);
+      } else if (!isValidSize) {
+        rejectedFiles.push(file.name);
+      }
     });
+  
+    if (rejectedFiles.length > 0) {
+      alert(`These files are too large (max 50MB):\n${rejectedFiles.join('\n')}`);
+    }
+  
     setSelectedFiles(validFiles);
   };
+  
   
   const handleUpload = () => {
     if (selectedFiles.length > 0) {
