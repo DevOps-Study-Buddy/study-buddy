@@ -56,18 +56,30 @@ const ResponseBox: React.FC<ResponseBoxProps> = ({ response, documents }) => {
   const [visibleAnswers, setVisibleAnswers] = useState<boolean[]>([]);
   const [revealAll, setRevealAll] = useState<boolean>(false);
   
-  const parsedQuiz: BackendQuestion[] | null = useMemo(() => {
-    try {
-      const parsed: BackendQuestion[] = JSON.parse(response);
-      if (Array.isArray(parsed)) {
-        setVisibleAnswers(parsed.map(() => revealAll));
-        return parsed;
-      }
-      return null;
-    } catch {
+  const parsedQuiz = useMemo(() => {
+    if (!response || response.trim() === '') {
       return null;
     }
-  }, [response]);
+  
+    try {
+      const parsed = JSON.parse(response);
+      if (parsed.quiz && Array.isArray(parsed.quiz)) {
+        const formattedQuiz = parsed.quiz.map((q: any) => ({
+          questionText: q.question,
+          answers: q.options.map((opt: any) => ({
+            answerText: opt.option,
+            correct: opt.isCorrect
+          }))
+        }));
+        setVisibleAnswers(formattedQuiz.map(() => revealAll));
+        return formattedQuiz;
+      }
+      return null;
+    } catch (error) {
+      console.error("Failed to parse quiz:", error);
+      return null;
+    }
+  }, [response, revealAll]);
   
 
   const toggleAnswer = (index: number) => {
@@ -115,7 +127,11 @@ const ResponseBox: React.FC<ResponseBoxProps> = ({ response, documents }) => {
                 </button>
 
                 {parsedQuiz.map((q, idx) => {
-                  const correctAnswer = q.answers.find(ans => ans.correct)?.answerText;
+                  const correctIndex = q.answers.findIndex(ans => ans.correct);
+                  const correctAnswer = correctIndex !== -1 ? {
+                    letter: String.fromCharCode(65 + correctIndex), // A, B, C...
+                    text: q.answers[correctIndex].answerText
+                  } : null;
 
                   return (
                     <div key={idx} className="quiz-question">
@@ -128,8 +144,10 @@ const ResponseBox: React.FC<ResponseBoxProps> = ({ response, documents }) => {
                       <button onClick={() => toggleAnswer(idx)} className="show-answer-btn">
                         {visibleAnswers[idx] ? 'Hide Answer' : 'Show Answer'}
                       </button>
-                      {visibleAnswers[idx] && (
-                        <div className="quiz-answer"><strong>Answer:</strong> {correctAnswer}</div>
+                      {visibleAnswers[idx] && correctAnswer && (
+                        <div className="quiz-answer">
+                          <strong>Answer:</strong> {correctAnswer.letter}. {correctAnswer.text}
+                        </div>
                       )}
                     </div>
                   );
