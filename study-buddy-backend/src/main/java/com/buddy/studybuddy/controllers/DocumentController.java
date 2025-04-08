@@ -6,13 +6,17 @@ import com.buddy.studybuddy.entities.Question;
 import com.buddy.studybuddy.entities.User;
 import com.buddy.studybuddy.repositories.AnswerRepository;
 import com.buddy.studybuddy.repositories.DocumentRepository;
+import com.buddy.studybuddy.repositories.UserRepository;
 import com.buddy.studybuddy.services.ChatGptService;
 import com.buddy.studybuddy.services.DocumentService;
 import org.apache.tika.exception.TikaException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.HttpStatus;
@@ -30,6 +34,9 @@ public class DocumentController {
     private final DocumentRepository documentRepository;
     private final ChatGptService chatGptService;
     private final AnswerRepository answerRepository;
+    @Autowired
+    UserRepository userRepository;
+    private int UserId;
 
     public DocumentController(DocumentService documentService, DocumentRepository documentRepository, ChatGptService chatGptService, AnswerRepository answerRepository) {
         this.documentService = documentService;
@@ -58,10 +65,30 @@ public class DocumentController {
 
             // Get authenticated user
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            User currentUser = (User) authentication.getPrincipal();
 
+            Object principal = authentication.getPrincipal();
+
+            if (principal instanceof User) {
+                // If the user is authenticated via JWT and is a custom User entity
+                User currentUser = (User) authentication.getPrincipal();
+                UserId=currentUser.getId();
+            } else if (principal instanceof DefaultOAuth2User) {
+
+            //
+                        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+
+            // Get the email from the OAuth2 attributes
+                        String email = oAuth2User.getAttribute("email");
+
+            // Use the email to find your app's User entity
+
+            User currentUser = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            UserId=currentUser.getId();
+
+            }
             // Save extracted document
-            Document savedDocument = documentService.saveDocument(currentUser.getId(), file, extractedText, fileUrl, totalQuestion);
+            Document savedDocument = documentService.saveDocument(UserId, file, extractedText, fileUrl, totalQuestion);
 
             // Generate and save quiz
             List<Question> generatedQuestions = chatGptService.generateQuiz(savedDocument, totalQuestion);
