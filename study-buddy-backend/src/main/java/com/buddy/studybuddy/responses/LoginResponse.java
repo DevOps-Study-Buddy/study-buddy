@@ -1,5 +1,5 @@
 package com.buddy.studybuddy.responses;
-
+//The login response java file
 public class LoginResponse {
     private String token;
 

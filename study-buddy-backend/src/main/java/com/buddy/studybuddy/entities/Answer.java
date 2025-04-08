@@ -2,7 +2,7 @@ package com.buddy.studybuddy.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-
+//The Answer entities java file
 @Entity
 @Getter
 @Setter

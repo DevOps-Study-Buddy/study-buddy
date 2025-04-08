@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+//The document controller java file
 @RestController
 @RequestMapping("/api/documents")
 public class DocumentController {

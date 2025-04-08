@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
-
+//The Question entities java file
 @Entity
 @Getter
 @Setter

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+//The user controller java file
 @RequestMapping("/users")
 @RestController
 public class UserController {

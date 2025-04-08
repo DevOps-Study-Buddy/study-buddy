@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-
+//The User entities java file
 @Table(name = "users")
 @Entity
 public class User implements UserDetails {

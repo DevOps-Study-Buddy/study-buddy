@@ -13,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
+//The Authentication service java file
 @Service
 public class AuthenticationService {
     private final UserRepository userRepository;

@@ -19,6 +19,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import com.buddy.studybuddy.services.CustomOAuth2UserService;
 import java.util.List;
 
+//The security configuration java file
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity

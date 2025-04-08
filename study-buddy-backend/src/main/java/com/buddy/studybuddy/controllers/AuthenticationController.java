@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+//The authentication controller java file
 @RequestMapping("/auth")
 @RestController
 public class AuthenticationController {
