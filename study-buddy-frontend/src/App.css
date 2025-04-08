@@ -30,6 +30,15 @@
   overflow: hidden;
 }
 
+.session-list {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+
 .right-panel {
   flex: 1;
   padding: 1rem;
