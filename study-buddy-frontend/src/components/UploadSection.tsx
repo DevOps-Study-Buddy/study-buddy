@@ -39,21 +39,39 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onDocumentsSelected, isAc
   
   const handleButtonClick = () => fileInputRef.current?.click();
   
-  const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB in bytes
+
+  const MAX_TOTAL_SIZE = 50 * 1024 * 1024; // 50MB in bytes
   const handleFiles = (files: File[]) => {
-    const validFiles = files.filter(file => {
-      const fileExt = file.name.split('.').pop()?.toLowerCase();
-      const isValidType = ['pdf', 'doc', 'docx', 'ppt', 'pptx'].includes(fileExt || '');
-      const isValidSize = file.size <= MAX_FILE_SIZE;
-      return isValidType && isValidSize;
-    });
-  
-    if (validFiles.length < files.length) {
-      alert("Some files were excluded because they exceed the 50MB limit or have an invalid file type.");
+    const validFiles: File[] = [];
+    const rejectedFiles: string[] = [];
+
+    const fileExtsAllowed = ['pdf', 'doc', 'docx', 'ppt', 'pptx'];
+    const isValidType = (file: File) =>
+      fileExtsAllowed.includes(file.name.split('.').pop()?.toLowerCase() || '');
+
+    const totalSize = files.reduce((acc, file) => acc + file.size, 0);
+
+    if (totalSize > MAX_TOTAL_SIZE) {
+      alert(`Total file size exceeds the 50MB limit. Please select smaller files.`);
+      return;
     }
-  
+
+    files.forEach(file => {
+      if (isValidType(file)) {
+        validFiles.push(file);
+      } else {
+        rejectedFiles.push(file.name);
+      }
+    });
+
+    if (rejectedFiles.length > 0) {
+      alert(`These files are not supported types:\n${rejectedFiles.join('\n')}`);
+    }
+
     setSelectedFiles(validFiles);
   };
+
+  
   const handleUpload = () => {
     if (selectedFiles.length > 0) {
       onDocumentsSelected(selectedFiles, numQuestions); // ← now passing real files
