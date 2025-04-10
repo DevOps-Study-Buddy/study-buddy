@@ -113,6 +113,7 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onDocumentsSelected, isAc
           type="number"
           id="numQuestions"
           min="1"
+          max="99"
           value={numQuestions}
           onChange={(e) => setNumQuestions(Number(e.target.value))}
           className="question-input"
