@@ -12,6 +12,14 @@ pipeline {
       }
     }
 
+    stage('Debug Shell') {
+      steps {
+        sh 'echo "Shell is working!"'
+        sh 'node -v'
+        sh 'npm -v'
+      }
+    }
+
     stage('Install Dependencies') {
       steps {
         sh 'npm install'
