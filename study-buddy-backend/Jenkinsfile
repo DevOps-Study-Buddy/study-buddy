@@ -22,20 +22,26 @@ pipeline {
 
         stage('Build Docker Images') {
             steps {
+            dir('study-buddy-backend') {
                 bat 'docker-compose build'
+                }
             }
         }
 
         stage('Run Tests') {
             steps {
+            dir('study-buddy-backend') {
                 bat 'mvn test'
+                }
             }
         }
 
         stage('Start Services') {
             steps {
+            dir('study-buddy-backend') {
                 bat 'docker-compose down' // Stop previous containers if needed
                 bat 'docker-compose up -d'
+                }
             }
         }
     }
