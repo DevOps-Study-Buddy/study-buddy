@@ -2,15 +2,22 @@ pipeline {
   agent any
 
   tools {
+    git 'Git for windows'
     nodejs 'Node 22.14.0' // Must match what you configured in Jenkins
   }
-
+  stage('Check Git Version') {
+  steps {
+    sh 'git --version'
+  }
+  }
+  
   stages {
     stage('Clone Repo') {
       steps {
         checkout scm
       }
     }
+
 
     stage('Debug Shell') {
       steps {
