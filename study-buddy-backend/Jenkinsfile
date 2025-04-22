@@ -34,7 +34,9 @@ pipeline {
             steps {
                 dir('study-buddy-backend') {
                     bat 'docker-compose down'
-                    bat 'docker-compose up -d'
+                    bat 'docker-compose up -d db'
+                    bat 'timeout /T 15' // ⏳ wait for MySQL to be ready
+                    bat 'docker-compose up -d app'
                 }
             }
         }
