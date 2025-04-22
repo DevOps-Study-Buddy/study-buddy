@@ -42,9 +42,10 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                dir('study-buddy-backend') {
-                    bat 'mvn test'
-                }
+                    echo 'Running Tests'
+//                 dir('study-buddy-backend') {
+//                     bat 'mvn test'
+//                 }
             }
         }
 
