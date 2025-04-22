@@ -3,22 +3,21 @@ pipeline {
 
   tools {
     git 'Git for windows'
-    nodejs 'Node 22.14.0' // Must match what you configured in Jenkins
+    nodejs 'Node 22.14.0'
   }
-  stage('Check Git Version') {
-  steps {
-    sh 'git --version'
-  }
-  }
-  
+
   stages {
+    stage('Check Git Version') {
+      steps {
+        sh 'git --version'
+      }
+    }
+
     stage('Clone Repo') {
       steps {
         checkout scm
       }
     }
-
-
     stage('Debug Shell') {
       steps {
         sh 'echo "Shell is working!"'
@@ -41,7 +40,7 @@ pipeline {
 
     stage('Test') {
       steps {
-        sh 'npm run test' // optional, only if you have tests
+        sh 'npm run test'
       }
     }
 
