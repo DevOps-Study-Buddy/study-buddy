@@ -35,7 +35,7 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 dir('study-buddy-backend') {
-                    bat 'docker-compose build'
+                     bat 'docker-compose build'
                 }
             }
         }
@@ -50,18 +50,10 @@ pipeline {
 
         stage('Start Services') {
             steps {
-                dir('study-buddy-backend') {
-                bat 'docker-compose down'
-                bat 'docker-compose up -d db'
-                bat '''
-                echo Waiting for MySQL to be ready...
-                FOR /L %%i IN (1,1,20) DO (
-                docker exec studybuddy-backend-db-1 mysqladmin ping -h localhost -u%MYSQL_USER% -p%MYSQL_PASSWORD% >nul 2>&1 && exit /b 0
-                timeout /t 3 >nul
-                )
-                '''
-                bat 'docker-compose up -d app'
-                }
+                  dir('study-buddy-backend') {
+                      bat 'docker-compose down'
+                      bat 'docker-compose up -d'
+                  }
             }
         }
     }
@@ -73,7 +65,7 @@ pipeline {
                  body: "The latest deployment of StudyBuddy completed successfully."
         }
         failure {
-            mail to: 'seyiolawepo@gmail.com, tba2crt@bolton.ac.uk,fac1crt@bolton.ac.uk',
+            mail to: 'seyiolawepo@gmail.com, tba2crt@bolton.ac.uk,fac1crt@bolton.ac.uk,sso1crt@bolton.ac.uk',
                  subject: "❌ CI/CD Deployment Failed - StudyBuddy",
                  body: "The deployment of StudyBuddy failed. Please check Jenkins for logs."
         }
