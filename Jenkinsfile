@@ -18,6 +18,7 @@ pipeline {
         checkout scm
       }
     }
+
     stage('Debug Shell') {
       steps {
         sh 'echo "Shell is working!"'
@@ -39,14 +40,11 @@ pipeline {
     }
 
     stage('Test') {
-  when {
-    expression { false }
-  }
-  steps {
-    echo 'Skipping tests...'
-  }
-}
-
+      when {
+        expression { false } // This will skip the test stage
+      }
+      steps {
+        echo 'Skipping tests...'
       }
     }
 
