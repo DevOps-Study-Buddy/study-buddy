@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "build": "echo \"Skipping build step (no build command defined)\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"No tests yet!\""
   },
   "repository": {
     "type": "git",
