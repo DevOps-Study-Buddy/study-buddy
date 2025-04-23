@@ -1,7 +1,6 @@
 // src/contexts/AuthContext.tsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie';
 
 // Define User type based on backend response
 interface User {
@@ -19,6 +18,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const serverAdress = import.meta.env.VITE_API_BASE_URL;
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -29,7 +30,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 const checkAuthStatus = async () => {
   
   try {
-    const response = await fetch('http://localhost:8005/users/me', {
+    const response = await fetch(`${serverAdress}/users/me`, {
       method: 'GET',
       credentials: 'include',  // This ensures cookies are sent automatically
     });
@@ -58,7 +59,7 @@ const checkAuthStatus = async () => {
 
   const logout = async () => {
     try {
-      await fetch('http://localhost:8005/api/auth/logout', {
+      await fetch(`${serverAdress}/api/auth/logout`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('studybuddy_token')}`,
