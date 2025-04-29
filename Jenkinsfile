@@ -41,7 +41,7 @@ pipeline {
 
     stage('Test') {
       when {
-        expression { false } // This will skip the test stage
+        expression { true } // This will skip the test stage
       }
       steps {
         echo 'Skipping tests...'
