@@ -33,7 +33,7 @@ export interface User {
   photoUrl?: string;
 }
 
-const serverAdress = 'http://localhost:8005';
+const serverAdress = import.meta.env.VITE_API_BASE_URL;
 
 // Protected route component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {

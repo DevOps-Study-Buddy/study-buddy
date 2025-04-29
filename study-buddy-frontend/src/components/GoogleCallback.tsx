@@ -9,6 +9,8 @@ const GoogleCallback: React.FC = () => {
   const { login } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
+  const serverAdress = import.meta.env.VITE_API_BASE_URL;
+  
   useEffect(() => {
     const code = searchParams.get('code');
     
@@ -19,7 +21,7 @@ const GoogleCallback: React.FC = () => {
 
     const exchangeCodeForToken = async () => {
       try {
-        const response = await fetch('/api/auth/google/callback', {
+        const response = await fetch(`${serverAdress}/api/auth/google/callback`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
