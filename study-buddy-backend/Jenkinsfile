@@ -35,7 +35,7 @@ pipeline {
         stage('Build Docker Images') {
             steps {
                 dir('study-buddy-backend') {
-                     bat 'docker-compose build'
+                     sh 'docker-compose build'
                 }
             }
         }
@@ -52,8 +52,8 @@ pipeline {
         stage('Start Services') {
             steps {
                   dir('study-buddy-backend') {
-                      bat 'docker-compose down'
-                      bat 'docker-compose up -d'
+                      sh 'docker-compose down'
+                      sh 'docker-compose up -d'
                   }
             }
         }
