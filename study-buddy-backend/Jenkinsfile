@@ -52,23 +52,48 @@ pipeline {
         stage('Start Services') {
             steps {
                   dir('study-buddy-backend') {
-                      sh 'docker-compose down'
-                      sh 'docker-compose up -d'
+                      sh 'docker compose down'
+                      sh 'docker compose up -d'
                   }
             }
         }
     }
 
-    post {
-        success {
-            mail to: 'seyiolawepo@gmail.com, tba2crt@bolton.ac.uk,fac1crt@bolton.ac.uk,sso1crt@bolton.ac.uk,R.tucker@bolton.ac.uk,as37crt@bolton.ac.uk',
-                 subject: "✅ CI/CD Deployment Success - StudyBuddy",
-                 body: "The latest deployment of StudyBuddy completed successfully."
-        }
-        failure {
-            mail to: 'seyiolawepo@gmail.com, tba2crt@bolton.ac.uk,fac1crt@bolton.ac.uk,sso1crt@bolton.ac.uk,R.tucker@bolton.ac.uk,as37crt@bolton.ac.uk',
-                 subject: "❌ CI/CD Deployment Failed - StudyBuddy",
-                 body: "The deployment of StudyBuddy failed. Please check Jenkins for logs."
-        }
+post {
+    success {
+        mail to: 'seyiolawepo@gmail.com, tba2crt@bolton.ac.uk, fac1crt@bolton.ac.uk, sso1crt@bolton.ac.uk, R.tucker@bolton.ac.uk, as37crt@bolton.ac.uk',
+             subject: "✅ CI/CD Deployment Success - StudyBuddy (Production)",
+             body: """\
+Hello Team,
+
+🎉 The latest deployment of *StudyBuddy* was successfully completed to **Production**.
+
+✅ Jenkins pipeline executed all stages without error.
+✅ Application is live and running on the Azure production instance.
+
+👏 Well done **DevOps Team - Coholt L, Group 5** for delivering a stable deployment!
+
+Regards,
+Jenkins CI/CD Bot
+"""
     }
+    failure {
+        mail to: 'seyiolawepo@gmail.com, tba2crt@bolton.ac.uk, fac1crt@bolton.ac.uk, sso1crt@bolton.ac.uk, R.tucker@bolton.ac.uk, as37crt@bolton.ac.uk',
+             subject: "❌ CI/CD Deployment Failed - StudyBuddy (Production)",
+             body: """\
+Hello Team,
+
+⚠️ The deployment of *StudyBuddy* to **Production** failed.
+
+❌ One or more stages in the Jenkins pipeline encountered errors.
+📋 Please check the Jenkins console output for detailed logs and investigate the root cause.
+
+💡 Keep going, **DevOps Team - Coholt L, Group 5** — deployment issues are part of the learning journey!
+
+Regards,
+Jenkins CI/CD Bot
+"""
+    }
+}
+
 }
