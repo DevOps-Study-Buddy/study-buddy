@@ -59,41 +59,57 @@ pipeline {
         }
     }
 
-post {
-    success {
-        mail to: 'seyiolawepo@gmail.com, tba2crt@bolton.ac.uk, fac1crt@bolton.ac.uk, sso1crt@bolton.ac.uk, R.tucker@bolton.ac.uk, as37crt@bolton.ac.uk',
-             subject: "✅ CI/CD Deployment Success - StudyBuddy (Production)",
-             body: """\
-Hello Team,
+    post {
+        success {
+            script {
+                def commit = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+                def message = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+                def timestamp = new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('UTC'))
 
-🎉 The latest deployment of *StudyBuddy* was successfully completed to **Production**.
+                mail to: 'seyiolawepo@gmail.com, tba2crt@bolton.ac.uk, fac1crt@bolton.ac.uk, sso1crt@bolton.ac.uk, R.tucker@bolton.ac.uk, as37crt@bolton.ac.uk',
+                     subject: "✅ CI/CD Deployment Success - StudyBuddy (Production)",
+                     body: """\
+    Hello Team,
 
-✅ Jenkins pipeline executed all stages without error.
-✅ Application is live and running on the Azure production instance.
+    🎉 *StudyBuddy* has been successfully deployed to **Production**!
 
-👏 Well done **DevOps Team - Coholt L, Group 5** for delivering a stable deployment!
+    ✅ Deployment Timestamp (UTC): ${timestamp}
+    ✅ Git Commit: ${commit}
+    📄 Commit Message: ${message}
 
-Regards,
-Jenkins CI/CD Bot
-"""
+    👏 Great job, **DevOps Team - Coholt L, Group 5** — your pipeline ran smoothly and your app is now live.
+
+    Regards,
+    Jenkins CI/CD Bot
+    """
+            }
+        }
+        failure {
+            script {
+                def commit = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+                def message = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+                def timestamp = new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('UTC'))
+
+                mail to: 'seyiolawepo@gmail.com, tba2crt@bolton.ac.uk, fac1crt@bolton.ac.uk, sso1crt@bolton.ac.uk, R.tucker@bolton.ac.uk, as37crt@bolton.ac.uk',
+                     subject: "❌ CI/CD Deployment Failed - StudyBuddy (Production)",
+                     body: """\
+    Hello Team,
+
+    ⚠️ The deployment of *StudyBuddy* to **Production** failed.
+
+    ❌ Deployment Timestamp (UTC): ${timestamp}
+    ❌ Git Commit: ${commit}
+    📄 Commit Message: ${message}
+
+    📋 Please review the Jenkins logs to identify and resolve the error.
+
+    💡 Keep pushing forward, **DevOps Team - Coholt L, Group 5** — challenges lead to growth.
+
+    Regards,
+    Jenkins CI/CD Bot
+    """
+            }
+        }
     }
-    failure {
-        mail to: 'seyiolawepo@gmail.com, tba2crt@bolton.ac.uk, fac1crt@bolton.ac.uk, sso1crt@bolton.ac.uk, R.tucker@bolton.ac.uk, as37crt@bolton.ac.uk',
-             subject: "❌ CI/CD Deployment Failed - StudyBuddy (Production)",
-             body: """\
-Hello Team,
-
-⚠️ The deployment of *StudyBuddy* to **Production** failed.
-
-❌ One or more stages in the Jenkins pipeline encountered errors.
-📋 Please check the Jenkins console output for detailed logs and investigate the root cause.
-
-💡 Keep going, **DevOps Team - Coholt L, Group 5** — deployment issues are part of the learning journey!
-
-Regards,
-Jenkins CI/CD Bot
-"""
-    }
-}
 
 }
