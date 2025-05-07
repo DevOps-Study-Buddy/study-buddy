@@ -53,7 +53,7 @@ pipeline {
             steps {
                   dir('study-buddy-backend') {
                       sh 'docker compose down'
-                      sh 'docker-compose up -d'
+                      sh 'docker compose up -d'
                   }
             }
         }
