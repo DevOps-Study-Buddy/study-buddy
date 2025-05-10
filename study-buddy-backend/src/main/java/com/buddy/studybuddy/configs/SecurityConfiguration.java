@@ -32,6 +32,7 @@ public class SecurityConfiguration {
     @Value("${frontend.dashboard.url}")
     private String dashboardUrl;
 
+
     public SecurityConfiguration(
             JwtAuthenticationFilter jwtAuthenticationFilter,
             AuthenticationProvider authenticationProvider,

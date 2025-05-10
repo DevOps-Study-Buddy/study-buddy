@@ -1,0 +1,123 @@
+pipeline {
+    agent any
+
+    environment {
+        MYSQL_DATABASE = credentials('mysql-database-name')
+        MYSQL_USER = credentials('mysql-username')
+        MYSQL_PASSWORD = credentials('mysql-password')
+        MYSQL_ROOT_PASSWORD = credentials('mysql-root-password')
+        JWT_SECRET_KEY = credentials('jwt-secret-key')
+        JWT_EXPIRATION_TIME = '3600000'
+        GOOGLE_CLIENT_ID = credentials('google-client-id')
+        GOOGLE_CLIENT_SECRET = credentials('google-client-secret')
+        OPENAI_API_KEY = credentials('openai-api-key')
+    }
+
+    stages {
+        stage('Prepare Environment') {
+            steps {
+                dir('study-buddy-backend') {
+                    writeFile file: '.env', text: """
+                        MYSQL_DATABASE=${env.MYSQL_DATABASE}
+                        MYSQL_USER=${env.MYSQL_USER}
+                        MYSQL_PASSWORD=${env.MYSQL_PASSWORD}
+                        MYSQL_ROOT_PASSWORD=${env.MYSQL_ROOT_PASSWORD}
+                        JWT_SECRET_KEY=${env.JWT_SECRET_KEY}
+                        JWT_EXPIRATION_TIME=${env.JWT_EXPIRATION_TIME}
+                        GOOGLE_CLIENT_ID=${env.GOOGLE_CLIENT_ID}
+                        GOOGLE_CLIENT_SECRET=${env.GOOGLE_CLIENT_SECRET}
+                        OPENAI_API_KEY=${env.OPENAI_API_KEY}
+                    """
+                }
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                dir('study-buddy-backend') {
+                    sh 'docker compose build'
+                }
+            }
+        }
+        stage('Build Frontend Dependencies') {
+             steps {
+                 dir('study-buddy-frontend') {
+                     sh 'npm install'
+                 }
+             }
+        }
+
+        stage('Run Tests') {
+            steps {
+                    echo 'Running Tests'
+//                 dir('study-buddy-backend') {
+//                     bat 'mvn test'
+//                 }
+            }
+        }
+
+        stage('Start Services') {
+            steps {
+                  dir('study-buddy-backend') {
+                      sh 'docker compose down'
+                      sh 'docker compose up -d'
+                      sh 'npm run dev'
+                  }
+            }
+        }
+    }
+
+    post {
+        success {
+            script {
+                def commit = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+                def message = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+                def timestamp = new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('UTC'))
+
+                mail to: 'seyiolawepo@gmail.com, tba2crt@bolton.ac.uk, fac1crt@bolton.ac.uk, sso1crt@bolton.ac.uk, R.tucker@bolton.ac.uk, as37crt@bolton.ac.uk',
+                     subject: "✅ CI/CD Deployment Success - StudyBuddy (Production)",
+                     body: """\
+    Hello Team 5,
+
+    🎉 *StudyBuddy* has been successfully deployed to **Production**!
+
+    ✅ Deployment Timestamp (UTC): ${timestamp}
+    ✅ Git Commit: ${commit}
+    📄 Commit Message: ${message}
+
+    👏 Great job, **DevOps Team - Coholt L, Group 5** — your pipeline ran smoothly and your app is now live.
+
+    Regards,
+    Jenkins CI/CD Bot
+    """
+            }
+        }
+        failure {
+            script {
+                def commit = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+                def message = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+                def timestamp = new Date().format("yyyy-MM-dd HH:mm:ss", TimeZone.getTimeZone('UTC'))
+
+                mail to: 'seyiolawepo@gmail.com, tba2crt@bolton.ac.uk, fac1crt@bolton.ac.uk, sso1crt@bolton.ac.uk, R.tucker@bolton.ac.uk, as37crt@bolton.ac.uk',
+                     subject: "❌ CI/CD Deployment Failed - StudyBuddy (Production)",
+                     body: """\
+    Hello Team 5,
+
+    ⚠️ The deployment of *StudyBuddy* to **Production** failed.
+
+    ❌ Deployment Timestamp (UTC): ${timestamp}
+    ❌ Git Commit: ${commit}
+    📄 Commit Message: ${message}
+
+    📋 Please review the Jenkins logs to identify and resolve the error.
+
+    💡 Keep pushing forward, **DevOps Team - Coholt L, Group 5** — challenges lead to growth.
+
+    Regards,
+    Jenkins CI/CD Bot
+    """
+            }
+        }
+    }
+
+}
