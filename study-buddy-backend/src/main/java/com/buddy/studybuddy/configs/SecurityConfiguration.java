@@ -29,6 +29,8 @@ public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final JwtService jwtService;
+    @Value("${frontend.dashboard.url}")
+    private String dashboardUrl;
 
 
     public SecurityConfiguration(
@@ -75,7 +77,7 @@ public class SecurityConfiguration {
 
                             response.addCookie(jwtCookie);
                             // Redirect to frontend
-                            response.sendRedirect("http://localhost:5173/dashboard");
+                            response.sendRedirect(dashboardUrl);
                         })
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
