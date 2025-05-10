@@ -69,7 +69,7 @@ pipeline {
                 mail to: 'seyiolawepo@gmail.com, tba2crt@bolton.ac.uk, fac1crt@bolton.ac.uk, sso1crt@bolton.ac.uk, R.tucker@bolton.ac.uk, as37crt@bolton.ac.uk',
                      subject: "✅ CI/CD Deployment Success - StudyBuddy (Production)",
                      body: """\
-    Hello Team,
+    Hello Team 5,
 
     🎉 *StudyBuddy* has been successfully deployed to **Production**!
 
@@ -93,7 +93,7 @@ pipeline {
                 mail to: 'seyiolawepo@gmail.com, tba2crt@bolton.ac.uk, fac1crt@bolton.ac.uk, sso1crt@bolton.ac.uk, R.tucker@bolton.ac.uk, as37crt@bolton.ac.uk',
                      subject: "❌ CI/CD Deployment Failed - StudyBuddy (Production)",
                      body: """\
-    Hello Team,
+    Hello Team 5,
 
     ⚠️ The deployment of *StudyBuddy* to **Production** failed.
 
