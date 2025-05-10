@@ -7,14 +7,20 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Getter
-@Setter
-@NoArgsConstructor
+
 public class BusinessException extends RuntimeException {
 
     private List<ErrorDTO> errors;
 
     public BusinessException(List<ErrorDTO> errors){
+        this.errors = errors;
+    }
+
+    public List<ErrorDTO> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(List<ErrorDTO> errors) {
         this.errors = errors;
     }
 }

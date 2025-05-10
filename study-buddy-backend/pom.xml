@@ -11,20 +11,34 @@
     <groupId>com.buddy</groupId>
     <artifactId>studybuddy</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>demo</module>
+    </modules>
     <name>studybuddy</name>
     <description>studybuddy</description>
-    <url/>
+    <url>https://github.com/DevOps-Study-Buddy/study-buddy</url>
+
     <licenses>
-        <license/>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+        </license>
     </licenses>
+
     <developers>
-        <developer/>
+        <developer>
+            <id>sheyi103</id>
+            <name>Seyi Olawepo</name>
+            <email>seyiolawepo@gmail.com</email>
+        </developer>
     </developers>
+
     <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
+        <connection>scm:git:git://github.com/DevOps-Study-Buddy/study-buddy.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/DevOps-Study-Buddy/study-buddy.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://github.com/DevOps-Study-Buddy/study-buddy</url>
     </scm>
     <properties>
         <java.version>17</java.version>
@@ -50,6 +64,7 @@
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
+            <version>8.3.0</version> <!-- or newer -->
             <scope>runtime</scope>
         </dependency>
         <dependency>

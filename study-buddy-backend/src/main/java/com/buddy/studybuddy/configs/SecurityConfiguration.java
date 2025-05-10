@@ -1,6 +1,7 @@
 package com.buddy.studybuddy.configs;
 
 import com.buddy.studybuddy.services.JwtService;
+import jakarta.servlet.http.Cookie;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -28,6 +29,9 @@ public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final JwtService jwtService;
+    @Value("${frontend.dashboard.url}")
+    private String dashboardUrl;
+
 
     public SecurityConfiguration(
             JwtAuthenticationFilter jwtAuthenticationFilter,
@@ -60,9 +64,20 @@ public class SecurityConfiguration {
                         .successHandler((request, response, authentication) -> {
                             OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
                             OAuth2User oAuth2User = oauthToken.getPrincipal();
+
                             String token = jwtService.generateOauthToken(oAuth2User);// Generate JWT
                             System.out.println("Auth Token: " + token);
-                            response.sendRedirect("http://localhost:3000/dashboard?token=" + token);
+//                            response.sendRedirect("http://localhost:5173/demo?token=" + token);
+                            // Store JWT in HTTP-only cookie
+                            Cookie jwtCookie = new Cookie("Authorization",token);
+                            jwtCookie.setHttpOnly(true);
+                            jwtCookie.setSecure(false); // Change to true in production (HTTPS required)
+                            jwtCookie.setPath("/");
+                            jwtCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
+
+                            response.addCookie(jwtCookie);
+                            // Redirect to frontend
+                            response.sendRedirect(dashboardUrl);
                         })
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
@@ -75,9 +90,10 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:8005"));
-        configuration.setAllowedMethods(List.of("GET", "POST"));
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
