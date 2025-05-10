@@ -39,13 +39,13 @@ pipeline {
                 }
             }
         }
-        stage('Build Frontend Dependencies') {
-             steps {
-                 dir('study-buddy-frontend') {
-                     sh 'npm install'
-                 }
-             }
-        }
+//         stage('Build Frontend Dependencies') {
+//              steps {
+//                  dir('study-buddy-frontend') {
+//                      sh 'npm install'
+//                  }
+//              }
+//         }
 
         stage('Run Tests') {
             steps {
@@ -61,7 +61,7 @@ pipeline {
                   dir('study-buddy-backend') {
                       sh 'docker compose down'
                       sh 'docker compose up -d'
-                      sh 'npm run dev'
+//                       sh 'npm run dev'
                   }
             }
         }
