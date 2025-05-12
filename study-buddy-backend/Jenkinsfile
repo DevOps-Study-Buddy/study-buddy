@@ -11,6 +11,7 @@ pipeline {
         GOOGLE_CLIENT_ID = credentials('google-client-id')
         GOOGLE_CLIENT_SECRET = credentials('google-client-secret')
         OPENAI_API_KEY = credentials('openai-api-key')
+        FRONT_END_DASHBOARD = credentials('front-end-dashboard')
     }
 
     stages {
@@ -27,6 +28,7 @@ pipeline {
                         GOOGLE_CLIENT_ID=${env.GOOGLE_CLIENT_ID}
                         GOOGLE_CLIENT_SECRET=${env.GOOGLE_CLIENT_SECRET}
                         OPENAI_API_KEY=${env.OPENAI_API_KEY}
+                        FRONT_END_DASHBOARD=${env.FRONT_END_DASHBOARD}
                     """
                 }
             }
