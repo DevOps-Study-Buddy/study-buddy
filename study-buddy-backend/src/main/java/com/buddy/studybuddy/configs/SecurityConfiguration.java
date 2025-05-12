@@ -78,7 +78,7 @@ public class SecurityConfiguration {
 
                             response.addCookie(jwtCookie);
                             // Redirect to frontend
-                            response.sendRedirect("https://study-buddy-red.vercel.app/");
+                            response.sendRedirect(FrontEndDashboardURL);
                         })
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
@@ -91,7 +91,7 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+        configuration.setAllowedOrigins(List.of(FrontEndDashboardURL));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
