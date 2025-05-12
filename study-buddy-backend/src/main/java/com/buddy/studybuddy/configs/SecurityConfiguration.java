@@ -78,7 +78,7 @@ public class SecurityConfiguration {
 
                             response.addCookie(jwtCookie);
                             // Redirect to frontend
-                            response.sendRedirect(FrontEndDashboardURL);
+                            response.sendRedirect("https://study-buddy-red.vercel.app/");
                         })
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
