@@ -72,7 +72,7 @@ public class SecurityConfiguration {
                             // Store JWT in HTTP-only cookie
                             Cookie jwtCookie = new Cookie("Authorization",token);
                             jwtCookie.setHttpOnly(true);
-                            jwtCookie.setSecure(false); // Change to true in production (HTTPS required)
+                            jwtCookie.setSecure(true); // Change to true in production (HTTPS required)
                             jwtCookie.setPath("/");
                             jwtCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
 
