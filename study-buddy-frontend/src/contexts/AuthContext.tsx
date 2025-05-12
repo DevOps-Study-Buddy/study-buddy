@@ -55,6 +55,8 @@ const checkAuthStatus = async () => {
 
   const login = (token: string) => {
     localStorage.setItem('studybuddy_token', token);
+    console.log("Dashboard navigated");
+    console.log(token);
     navigate('/dashboard');
   };
 
