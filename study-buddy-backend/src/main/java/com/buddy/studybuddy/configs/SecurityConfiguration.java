@@ -2,6 +2,7 @@ package com.buddy.studybuddy.configs;
 
 import com.buddy.studybuddy.services.JwtService;
 import jakarta.servlet.http.Cookie;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -29,6 +30,8 @@ public class SecurityConfiguration {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final JwtService jwtService;
+    @Value("${frontend.dashboard}")
+    private String FrontEndDashboardURL;
 
 
     public SecurityConfiguration(
