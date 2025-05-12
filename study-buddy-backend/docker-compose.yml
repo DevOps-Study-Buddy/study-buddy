@@ -35,6 +35,7 @@ services:
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       FRONT_END_DASHBOARD: ${FRONT_END_DASHBOARD}
+      FRONT_END_URL: ${FRONT_END_URL}
     depends_on:
       db:
         condition: service_healthy

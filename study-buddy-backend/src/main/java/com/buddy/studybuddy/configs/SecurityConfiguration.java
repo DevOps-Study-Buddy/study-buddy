@@ -32,6 +32,8 @@ public class SecurityConfiguration {
     private final JwtService jwtService;
     @Value("${frontend.dashboard}")
     private String FrontEndDashboardURL;
+    @Value("${frontend.url}")
+    private String FRONTEND_URL;
 
 
     public SecurityConfiguration(
@@ -91,7 +93,7 @@ public class SecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(FrontEndDashboardURL));
+        configuration.setAllowedOrigins(List.of(FRONTEND_URL));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
