@@ -38,11 +38,7 @@ pipeline {
                     sh 'docker compose build'
                 }
             }
-            steps {
-                dir('study-buddy-frontend'){
-                    sh 'npm install'
-                }
-            }
+
         }
 
         stage('Run Tests') {
