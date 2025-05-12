@@ -38,6 +38,7 @@ const checkAuthStatus = async () => {
 
     if (response.ok) {
       const userData = await response.json();
+      console.log(userData);
       setUser(userData);
     } else {
       console.error('Failed to fetch user details');
