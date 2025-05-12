@@ -78,7 +78,7 @@ public class SecurityConfiguration {
 
                             response.addCookie(jwtCookie);
                             // Redirect to frontend
-                            response.sendRedirect("http://localhost:5173/dashboard");
+                            response.sendRedirect(FrontEndDashboardURL);
                         })
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
