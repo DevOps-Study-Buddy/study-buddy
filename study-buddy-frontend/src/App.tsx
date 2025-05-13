@@ -40,10 +40,14 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div className="loading">Checking authentication.....</div>;
+    return <div className="loading">Checking authentication...</div>;
   }
 
-  return user ? <>{children}</> : <Navigate to="/" />;
+  if (!user) {
+    return <Navigate to="/" />;
+  }
+
+  return <>{children}</>;
 };
 
 // Main application component
