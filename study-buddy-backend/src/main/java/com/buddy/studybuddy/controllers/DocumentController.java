@@ -49,6 +49,7 @@ public class DocumentController {
 
 
     @PostMapping("/upload")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Object>> uploadFile(
             @RequestParam("file") MultipartFile file,
             @RequestParam("totalQuestion") Integer totalQuestion) {
