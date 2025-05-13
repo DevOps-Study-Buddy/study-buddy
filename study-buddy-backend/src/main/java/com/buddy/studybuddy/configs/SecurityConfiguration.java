@@ -2,9 +2,11 @@ package com.buddy.studybuddy.configs;
 
 import com.buddy.studybuddy.services.JwtService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -50,36 +52,38 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())  // Disable CSRF if using REST API
+                .csrf(csrf -> csrf.disable())  // Disable CSRF (if using a REST API)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**", "/oauth2/**", "/login/**").permitAll()
+                        // Optionally allow OPTIONS requests for preflight checks
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // For API endpoints, require authentication
+                        .requestMatchers("/api/**").authenticated()
                         .anyRequest().authenticated()
                 )
-//                .oauth2Login(oauth2 -> oauth2
-//                        .defaultSuccessUrl("/auth/info", true) // Redirects to /auth/info after login
-//                        .permitAll()
-//                        .userInfoEndpoint(userInfo -> userInfo
-//                                .userService(customOAuth2UserService) // Use custom OAuth2 user service
-//                        )
-//                )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            // Return 401 for unauthorized API requests instead of a redirect
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
+                        })
+                )
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler((request, response, authentication) -> {
                             OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
                             OAuth2User oAuth2User = oauthToken.getPrincipal();
 
-                            String token = jwtService.generateOauthToken(oAuth2User);// Generate JWT
+                            String token = jwtService.generateOauthToken(oAuth2User); // Generate JWT
                             System.out.println("Auth Token: " + token);
-//                            response.sendRedirect("http://localhost:5173/demo?token=" + token);
                             // Store JWT in HTTP-only cookie
-                            Cookie jwtCookie = new Cookie("Authorization",token);
+                            Cookie jwtCookie = new Cookie("Authorization", token);
                             jwtCookie.setHttpOnly(true);
-                            jwtCookie.setSecure(true); // Change to true in production (HTTPS required)
+                            jwtCookie.setSecure(true); // True in production (HTTPS required)
                             jwtCookie.setPath("/");
                             jwtCookie.setMaxAge(7 * 24 * 60 * 60); // 7 days
 
                             response.addCookie(jwtCookie);
-                            // Redirect to frontend
+                            // Redirect to frontend dashboard
                             response.sendRedirect(FrontEndDashboardURL);
                         })
                 )
@@ -89,6 +93,7 @@ public class SecurityConfiguration {
 
         return http.build();
     }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
