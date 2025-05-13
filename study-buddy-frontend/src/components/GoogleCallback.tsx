@@ -23,6 +23,7 @@ const GoogleCallback: React.FC = () => {
       try {
         const response = await fetch(`${serverAdress}/api/auth/google/callback`, {
           method: 'POST',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -36,7 +37,7 @@ const GoogleCallback: React.FC = () => {
         const userData = await response.json();
         console.log(userData);
         login(userData);
-        navigate('/app');
+        navigate('/dashboard');
       } catch (error) {
         console.error('Error during authentication:', error);
         setError('Authentication failed. Please try again.');
