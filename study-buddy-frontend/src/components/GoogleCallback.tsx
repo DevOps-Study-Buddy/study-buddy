@@ -32,8 +32,9 @@ const GoogleCallback: React.FC = () => {
         if (!response.ok) {
           throw new Error('Failed to exchange code for token');
         }
-
+        
         const userData = await response.json();
+        console.log(userData);
         login(userData);
         navigate('/app');
       } catch (error) {

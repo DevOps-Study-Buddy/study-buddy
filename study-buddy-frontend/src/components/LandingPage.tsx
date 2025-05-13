@@ -9,7 +9,7 @@ const LandingPage: React.FC = () => {
   const serverAdress = import.meta.env.VITE_API_BASE_URL;
 
   const handleGoogleLogin = () => {
-    // This will be replaced with actual Google OAuth implementation
+    console.log("Going to google oauth")
     window.location.href = `${serverAdress}/oauth2/authorization/google`;
   };
 
