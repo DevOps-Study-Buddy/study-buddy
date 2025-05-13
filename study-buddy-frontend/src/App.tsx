@@ -44,6 +44,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   }
 
   if (!user) {
+    console.log("ProtectedRoute: loading =", loading, "user =", user);
     return <Navigate to="/" />;
   }
 
