@@ -161,9 +161,9 @@ function App() {
 
           {/* Protected Routes */}
           <Route path="/dashboard" element={
-            <ProtectedRoute>
+            
               <MainApp />
-            </ProtectedRoute>
+        
           } />
           {/* Demo Page (Accessible without login) */}
           <Route path="/demo" element={<MainApp />} />
