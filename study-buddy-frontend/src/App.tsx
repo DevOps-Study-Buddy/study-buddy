@@ -68,7 +68,6 @@ const MainApp: React.FC = () => {
     formData.append('totalQuestion', numQuestions.toString());
 
     try {
-      console.log(`${serverAdress}/api/documents/upload`);
       const response = await axios.post(`${serverAdress}/api/documents/upload`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -166,7 +165,9 @@ function App() {
 
           {/* Protected Routes */}
           <Route path="/dashboard" element={
+            <ProtectedRoute>
               <MainApp />
+            </ProtectedRoute>
           } />
           {/* Demo Page (Accessible without login) */}
           <Route path="/demo" element={<MainApp />} />
