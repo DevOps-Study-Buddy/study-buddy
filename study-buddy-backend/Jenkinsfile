@@ -83,10 +83,10 @@ pipeline {
     ✅ Git Commit: ${commit}
     📄 Commit Message: ${message}
 
-    👏 Great job, **DevOps Team - Coholt L, Group 5** — your pipeline ran smoothly and your app is now live.
+    👏 Great job, **DevOps Team - Coholt L, Group 5** — your pipeline ran smoothly  Thank you for and your app is now live.
 
     Regards,
-    Jenkins CI/CD Bot
+    Jenkins CI/CD Team 5
     """
             }
         }
