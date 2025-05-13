@@ -6,6 +6,7 @@ import ResponseBox from './components/ResponseBox';
 import SessionList from './components/SessionList';
 import LandingPage from './components/LandingPage';
 import GoogleCallback from './components/GoogleCallback';
+import axios from 'axios';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import './App.css';
 
@@ -32,15 +33,18 @@ export interface User {
   photoUrl?: string;
 }
 
+const serverAdress = import.meta.env.VITE_API_BASE_URL;
+
 // Protected route component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <div className="loading">Loading...</div>;
+    return <div className="loading">Checking authentication...</div>;
   }
 
   if (!user) {
+    console.log("ProtectedRoute: loading =", loading, "user =", user);
     return <Navigate to="/" />;
   }
 
@@ -57,26 +61,45 @@ const MainApp: React.FC = () => {
   const currentSession = sessions.find(session => session.id === currentSessionId) || null;
   
   // Create a new session
-  const createSession = (documents: Document[]) => {
-    const newSession: Session = {
-      id: crypto.randomUUID(),
-      title: `Session ${sessions.length + 1}`,
-      timestamp: new Date(),
-      documents: documents,
-      response: '', // Empty initial response
-    };
-    
-    const updatedSessions = [...sessions, newSession];
-    setSessions(updatedSessions);
-    setCurrentSessionId(newSession.id);
-    
-    // Simulate receiving a response from backend
-    setTimeout(() => {
-      const responseText = `Processed ${documents.length} document(s):\n` + 
-        documents.map(doc => `- ${doc.name} (${doc.type})`).join('\n');
+  const createSession = async (files: File[], numQuestions: number) => {
+    const formData = new FormData();
+    for (const file of files) {
+      formData.append('file', file);
+    }
+    formData.append('totalQuestion', numQuestions.toString());
+
+    try {
+      const response = await axios.post(`${serverAdress}/api/documents/upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        withCredentials: true
+      });
+
       
-      updateSessionResponse(newSession.id, responseText);
-    }, 1500);
+      const uploadedDocs: Document[] = files.map(file => ({
+        id: crypto.randomUUID(), // replace with real ID if backend sends it
+        name: file.name,
+        type: file.type || 'application/octet-stream',
+        size: file.size,
+      }));
+  
+      const newSession: Session = {
+        id: crypto.randomUUID(),
+        title: `Session ${sessions.length + 1}`,
+        timestamp: new Date(),
+        documents: uploadedDocs,
+        response: JSON.stringify(response.data, null, 2), // real response
+      };
+  
+      const updatedSessions = [...sessions, newSession];
+      setSessions(updatedSessions);
+      setCurrentSessionId(newSession.id);
+      updateSessionResponse(newSession.id, newSession.response)
+  
+    } catch (error) {
+      console.error('Upload failed:', error);
+    }
   };
   
   // Update a session's response
@@ -138,14 +161,18 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/auth/google/callback" element={<GoogleCallback />} />
-          <Route path="/app" element={
-            <ProtectedRoute>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/auth/google/callback" element={<GoogleCallback />} />
+
+          {/* Protected Routes */}
+          <Route path="/dashboard" element={
               <MainApp />
-            </ProtectedRoute>
           } />
+          {/* Demo Page (Accessible without login) */}
           <Route path="/demo" element={<MainApp />} />
+
+          {/* Catch-all route: Redirect unknown paths to home */}
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

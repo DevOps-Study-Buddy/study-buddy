@@ -9,6 +9,8 @@ const GoogleCallback: React.FC = () => {
   const { login } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
+  const serverAdress = import.meta.env.VITE_API_BASE_URL;
+  
   useEffect(() => {
     const code = searchParams.get('code');
     
@@ -19,8 +21,9 @@ const GoogleCallback: React.FC = () => {
 
     const exchangeCodeForToken = async () => {
       try {
-        const response = await fetch('/api/auth/google/callback', {
+        const response = await fetch(`${serverAdress}/api/auth/google/callback`, {
           method: 'POST',
+          credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -30,10 +33,11 @@ const GoogleCallback: React.FC = () => {
         if (!response.ok) {
           throw new Error('Failed to exchange code for token');
         }
-
+        
         const userData = await response.json();
+        console.log(userData);
         login(userData);
-        navigate('/app');
+        navigate('/dashboard');
       } catch (error) {
         console.error('Error during authentication:', error);
         setError('Authentication failed. Please try again.');

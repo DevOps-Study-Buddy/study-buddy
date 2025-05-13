@@ -4,24 +4,20 @@ import { Document } from '../App';
 import './UploadSection.css';
 
 interface UploadSectionProps {
-  onDocumentsSelected: (documents: Document[]) => void;
+  onDocumentsSelected: (files: File[], numQuestions: number) => void; // ← changed from Document[] to File[]
   isActive: boolean;
 }
 
 const UploadSection: React.FC<UploadSectionProps> = ({ onDocumentsSelected, isActive }) => {
   const [dragActive, setDragActive] = useState<boolean>(false);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [numQuestions, setNumQuestions] = useState<number>(5); // Default to 5 questions
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const handleDrag = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    if (e.type === "dragenter" || e.type === "dragover") {
-      setDragActive(true);
-    } else if (e.type === "dragleave") {
-      setDragActive(false);
-    }
+    setDragActive(e.type === "dragenter" || e.type === "dragover");
   };
   
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -36,39 +32,52 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onDocumentsSelected, isAc
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    
     if (e.target.files && e.target.files.length > 0) {
       handleFiles(Array.from(e.target.files));
     }
   };
   
-  const handleButtonClick = () => {
-    fileInputRef.current?.click();
-  };
+  const handleButtonClick = () => fileInputRef.current?.click();
   
+
+  const MAX_TOTAL_SIZE = 50 * 1024 * 1024; // 50MB in bytes
   const handleFiles = (files: File[]) => {
-    const validFiles = files.filter(file => {
-      const fileExt = file.name.split('.').pop()?.toLowerCase();
-      return ['pdf', 'doc', 'docx', 'ppt', 'pptx'].includes(fileExt || '');
+    const validFiles: File[] = [];
+    const rejectedFiles: string[] = [];
+
+    const fileExtsAllowed = ['pdf', 'doc', 'docx', 'ppt', 'pptx'];
+    const isValidType = (file: File) =>
+      fileExtsAllowed.includes(file.name.split('.').pop()?.toLowerCase() || '');
+
+    const totalSize = files.reduce((acc, file) => acc + file.size, 0);
+
+    if (totalSize > MAX_TOTAL_SIZE) {
+      alert(`Total file size exceeds the 50MB limit. Please select smaller files.`);
+      return;
+    }
+
+    files.forEach(file => {
+      if (isValidType(file)) {
+        validFiles.push(file);
+      } else {
+        rejectedFiles.push(file.name);
+      }
     });
-    
+
+    if (rejectedFiles.length > 0) {
+      alert(`These files are not supported types:\n${rejectedFiles.join('\n')}`);
+    }
+
     setSelectedFiles(validFiles);
   };
+
   
   const handleUpload = () => {
     if (selectedFiles.length > 0) {
-      const documents: Document[] = selectedFiles.map(file => ({
-        id: crypto.randomUUID(),
-        name: file.name,
-        type: file.type || 'application/octet-stream',
-        size: file.size
-      }));
-      
-      onDocumentsSelected(documents);
+      onDocumentsSelected(selectedFiles, numQuestions); // ← now passing real files
       setSelectedFiles([]);
     }
   };
-  
   return (
     <div className="upload-section">
       <h2>Upload Documents</h2>
@@ -96,13 +105,29 @@ const UploadSection: React.FC<UploadSectionProps> = ({ onDocumentsSelected, isAc
           <p className="file-types">Accepted file types: PDF, Word, PowerPoint</p>
         </div>
       </div>
-      
+
+      {/* Input for number of questions */}
+      <div className="question-input-container">
+        <label htmlFor="numQuestions">Number of Questions:</label>
+        <input 
+          type="number"
+          id="numQuestions"
+          min="1"
+          max="99"
+          value={numQuestions}
+          onChange={(e) => setNumQuestions(Number(e.target.value))}
+          className="question-input"
+        />
+      </div>
+
       {selectedFiles.length > 0 && (
         <div className="selected-files">
           <h3>Selected Files ({selectedFiles.length})</h3>
           <ul>
             {selectedFiles.map((file, index) => (
-              <li key={index}>{file.name}</li>
+              <li key={index}>
+                {file.name} ({(file.size / (1024 * 1024)).toFixed(2)} MB)
+              </li>
             ))}
           </ul>
           <button 

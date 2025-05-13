@@ -1,10 +1,10 @@
 /* src/components/SessionList.css */
 .session-list {
-  padding: 1rem;
+  flex: 0.7; /* 70% height */
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  flex: 1;
+  padding: 1rem;
 }
 
 .session-list h2 {
